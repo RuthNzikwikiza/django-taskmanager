@@ -1,25 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Task List</title>
-  {% load static %}
+<meta charset="UTF-8">
+<title>My Tasks</title>
+{% load static %}
   <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
 </head>
 <body>
-  <div class="container">
-    <h2>Task List</h2>
-    <a href="{% url 'create_task' %}"><button>+ Add Task</button></a>
-
-    {% for task in tasks %}
-      <div class="task">
-        <strong>{{ task.title }}</strong><br>
-        <p>{{ task.description }}</p>
-        <p>Status: {% if task.completed %}✅ Completed{% else %}❌ Not completed{% endif %}</p>
-        <a href="{% url 'update_task' task.pk %}"><button>Edit</button></a>
-        <a href="{% url 'delete_task' task.pk %}"><button>Delete</button></a>
-      </div>
-    {% empty %}
-      <p>No tasks yet.</p>
-    {% endfor %}
-  </div>
+<div class="container">
+<div class="top-bar">
+   <div>
+<h2>Welcome </h2>
+ </div>
+<form method="POST" action="{% url 'logout' %}">
+{% csrf_token %}
+<button type="submit">Logout</button>
+ </form>
+</div>
+<h1>Your Tasks</h1>
+ <a href="{% url 'create_task' %}" >+ Create New Task</a>
+ <br><br>
+{% for task in tasks %}
+<div class="task">
+<div class="task-title">
+{{ task.title }} {% if task.completed %}✅{% endif %}
+</div>
+<div>{{ task.description }}</div>
+<div class="task-buttons">
+ <a href="{% url 'update_task' task.id %}" class="update-btn">Edit</a>
+ <a href="{% url 'delete_task' task.id %}" class="delete-btn">Delete</a>
+ </div>
+ </div>
+{% empty %}
+<p>No tasks found.</p>
+ {% endfor %}
+</div>
 </body>
+</html>
