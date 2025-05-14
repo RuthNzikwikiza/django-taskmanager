@@ -1,40 +1,31 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from rest_framework import viewsets, generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.models import User
 from .models import Task
+from .serializers import TaskSerializer
 
-@login_required
-def task_list(request):
-    tasks = Task.objects.filter(user=request.user) 
-    return render(request, 'tasks/task_list.html', {'tasks': tasks})
+class TaskViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
 
-@login_required
-def create_task(request):
-    if request.method == 'POST':
-        title = request.POST['title']
-        description = request.POST['description']
-        Task.objects.create(
-            user=request.user,  
-            title=title,
-            description=description
-        )
-        return redirect('task_list')
-    return render(request, 'tasks/create_task.html')
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
 
-@login_required
-def update_task(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user) 
-    if request.method == 'POST':
-        task.title = request.POST['title']
-        task.description = request.POST['description']
-        task.completed = 'completed' in request.POST
-        task.save()
-        return redirect('task_list')
-    return render(request, 'tasks/update_task.html', {'task': task})
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-@login_required
-def delete_task(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)  
-    if request.method == 'POST':
-        task.delete()
-        return redirect('task_list')
-    return render(request, 'tasks/delete_task.html', {'task': task})
+class RegisterSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]

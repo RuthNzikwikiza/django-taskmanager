@@ -32,30 +32,43 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'rest_framework.authtoken',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'rest_framework',
+     'rest_framework_simplejwt',
     'tasks',
+    'corsheaders',
+    
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True 
 ROOT_URLCONF = 'taskmanager.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'tasks/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,7 +128,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [BASE_DIR / "tasks/static"]
 
 
@@ -128,7 +141,6 @@ import os
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'tasks/static')]
 # settings.py
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = 'task_list'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_REDIRECT_URL = 'api-root'
+LOGOUT_REDIRECT_URL = '/api-auth/login/'
 
