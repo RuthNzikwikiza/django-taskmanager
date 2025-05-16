@@ -1,11 +1,13 @@
 body{
 font-family: Arial, sans-serif;
 background: #fafafa;
-display: flex;
+display: block;
 justify-content: center;
 align-items: center;
 min-height: 100vh;
 margin: 0;
+padding-left: 50px;
+padding-top: 50px;
 }
 .container {
 background: white;

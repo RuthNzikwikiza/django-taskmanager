@@ -144,3 +144,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'tasks/static')]
 LOGIN_REDIRECT_URL = 'api-root'
 LOGOUT_REDIRECT_URL = '/api-auth/login/'
 
+import os
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
